@@ -2,7 +2,11 @@ package com.marcelotomazini.android.antitheftadvanced;
 
 import android.app.ActionBar.LayoutParams;
 import android.app.Activity;
+import android.content.Context;
+import android.content.SharedPreferences;
 import android.os.Bundle;
+import android.view.View;
+import android.view.View.OnClickListener;
 import android.widget.Button;
 import android.widget.CheckBox;
 import android.widget.LinearLayout;
@@ -11,10 +15,11 @@ import android.widget.TextView;
 
 public class AntiTheftAdvancedActivity extends Activity {
 
+	private Button btnActivate;
+
 	@Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        
         setContentView(create());
     }
 
@@ -35,8 +40,13 @@ public class AntiTheftAdvancedActivity extends Activity {
 		periodicity.setMinValue(0);
 		periodicity.setMaxValue(60);
 		
-		Button btnActivate = new Button(this);
-		btnActivate.setText("Activate");
+		btnActivate = new Button(this);
+		btnActivate.setText(isActivated() ? "Deactivate" : "Activate");
+		btnActivate.setOnClickListener(new OnClickListener() {
+			@Override public void onClick(View v) {
+				btnActivate.setText(isActivated() ? "Deactivate" : "Activate");
+			}
+		});
 		
 		LinearLayout layout = new LinearLayout(this);
 		layout.setOrientation(LinearLayout.VERTICAL);
@@ -48,5 +58,11 @@ public class AntiTheftAdvancedActivity extends Activity {
 		layout.addView(btnActivate);
 		
 		return layout;
+	}
+
+	private boolean isActivated() {
+		SharedPreferences prefs = getSharedPreferences(AntiTheftAdvanced.APP_PACKAGE, Context.MODE_PRIVATE);
+		return prefs.getBoolean("active", false);
+//		prefs.edit().putLong(dateTimeKey, dt.getTime()).commit();
 	}
 }
