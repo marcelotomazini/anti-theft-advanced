@@ -16,10 +16,12 @@ import android.widget.TextView;
 public class AntiTheftAdvancedActivity extends Activity {
 
 	private Button btnActivate;
+	private SharedPreferences prefs;
 
 	@Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+        prefs = getSharedPreferences(AntiTheftAdvanced.APP_PACKAGE, Context.MODE_PRIVATE);
         setContentView(create());
     }
 
@@ -39,11 +41,13 @@ public class AntiTheftAdvancedActivity extends Activity {
 		periodicity.setContentDescription("Defines the frequency that the location is send (in minutes)");
 		periodicity.setMinValue(0);
 		periodicity.setMaxValue(60);
+		periodicity.setValue(15);
 		
 		btnActivate = new Button(this);
 		btnActivate.setText(isActivated() ? "Deactivate" : "Activate");
 		btnActivate.setOnClickListener(new OnClickListener() {
 			@Override public void onClick(View v) {
+				prefs.edit().putBoolean("active", !isActivated()).commit();
 				btnActivate.setText(isActivated() ? "Deactivate" : "Activate");
 			}
 		});
@@ -61,8 +65,6 @@ public class AntiTheftAdvancedActivity extends Activity {
 	}
 
 	private boolean isActivated() {
-		SharedPreferences prefs = getSharedPreferences(AntiTheftAdvanced.APP_PACKAGE, Context.MODE_PRIVATE);
 		return prefs.getBoolean("active", false);
-//		prefs.edit().putLong(dateTimeKey, dt.getTime()).commit();
 	}
 }
