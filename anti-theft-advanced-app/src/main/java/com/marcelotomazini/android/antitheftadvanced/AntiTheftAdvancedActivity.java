@@ -15,8 +15,13 @@ import android.widget.TextView;
 
 public class AntiTheftAdvancedActivity extends Activity {
 
+	public static final String ACTIVATE_MOBILE_DATA = "activateMobileData";
+	public static final String ACTIVATE_WIFI = "activateWifi";
+	
 	private Button btnActivate;
 	private SharedPreferences prefs;
+	private CheckBox chkWifi;
+	private CheckBox chkMobileData;
 
 	@Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -29,13 +34,23 @@ public class AntiTheftAdvancedActivity extends Activity {
 		TextView txt = new TextView(this);
 		txt.setText("Configuration");
 		
-		CheckBox chkWifi = new CheckBox(this);
+		chkWifi = new CheckBox(this);
 		chkWifi.setText("Activate WIFI automatically");
 		chkWifi.setContentDescription("Activate WIFI to send the location and turn off again");
+		chkWifi.setOnClickListener(new OnClickListener() {
+			@Override public void onClick(View v) {
+				prefs.edit().putBoolean(ACTIVATE_WIFI, chkWifi.isChecked()).commit();
+			}
+		});
 
-		CheckBox chkMobileData = new CheckBox(this);
+		chkMobileData = new CheckBox(this);
 		chkMobileData.setText("Activate Mobile Data automatically");
 		chkMobileData.setContentDescription("Activate Mobile Data to send the location and turn off again");
+		chkMobileData.setOnClickListener(new OnClickListener() {
+			@Override public void onClick(View v) {
+				prefs.edit().putBoolean(ACTIVATE_MOBILE_DATA, chkMobileData.isChecked()).commit();
+			}
+		});
 		
 		NumberPicker periodicity = new NumberPicker(this);
 		periodicity.setContentDescription("Defines the frequency that the location is send (in minutes)");
@@ -61,7 +76,14 @@ public class AntiTheftAdvancedActivity extends Activity {
 		layout.addView(periodicity);
 		layout.addView(btnActivate);
 		
+		loadSettings();
+		
 		return layout;
+	}
+
+	public void loadSettings() {
+		chkWifi.setChecked(prefs.getBoolean(ACTIVATE_WIFI, false));
+		chkMobileData.setChecked(prefs.getBoolean(ACTIVATE_MOBILE_DATA, false));
 	}
 
 	private boolean isActivated() {
